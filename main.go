@@ -1,19 +1,24 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 )
 
+type employee struct {
+	Name    string `json:"name"`
+	Surname string `json:"surname"`
+}
+
 func main() {
-	fmt.Println("Hello World")
+	employees := []employee{
+		{Name: "Emma", Surname: "Cartner"},
+		{Name: "Quinn", Surname: "Rivers"},
+	}
 
 	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
+	r.GET("/employees", func(c *gin.Context) {
+		c.JSON(200, employees)
 	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+
+	r.Run("localhost:8080")
 }
