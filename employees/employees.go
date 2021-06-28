@@ -1,4 +1,4 @@
-package main
+package Employees
 
 import "github.com/gin-gonic/gin"
 
@@ -7,17 +7,16 @@ type employee struct {
 	Surname string `json:"surname"`
 }
 
-type employees []employee
+var e []employee
 
-func newEmployees() employees {
-	employees := []employee{
+func Init() {
+	e = []employee{
 		{Name: "Emma", Surname: "Cartner"},
 		{Name: "Quinn", Surname: "Rivers"},
 		{Name: "Amelia", Surname: "Burrows"},
 	}
-	return employees
 }
 
-func (e employees) getEmployees(c *gin.Context) {
+func GetEmployees(c *gin.Context) {
 	c.JSON(200, e)
 }
