@@ -193,3 +193,8 @@ func Init() {
 func GetEmployees(c *gin.Context) {
 	c.JSON(200, e)
 }
+
+func GetEmployeeById(c *gin.Context) {
+	id := c.Param("id")
+	c.String(200, "Hello "+id)
+}

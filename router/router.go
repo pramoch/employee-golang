@@ -8,6 +8,8 @@ import (
 
 func Init() {
 	r := gin.Default()
+
+	r.GET("/employees/:id", Employees.GetEmployeeById)
 	r.GET("/employees", Employees.GetEmployees)
 
 	r.Run("localhost:8080")
