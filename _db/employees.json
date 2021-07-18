@@ -1,0 +1,21 @@
+[{
+  "_id": {
+    "$oid": "60f418127e10143e505dc40f"
+  },
+  "id": "700101",
+  "name": "Emma",
+  "surname": "Cartner",
+  "mobileNo": "0815467890",
+  "salary": {
+    "$numberDecimal": "15000"
+  },
+  "joinDate": {
+    "$date": "2017-06-01T00:00:00Z"
+  },
+  "position": {
+    "$oid": "60f414b07e10143e505dc406"
+  },
+  "branch": {
+    "$oid": "60f4158f7e10143e505dc408"
+  }
+}]
