@@ -11,6 +11,7 @@ func Init() {
 
 	r.GET("/employees/:id", Employees.GetEmployeeById)
 	r.GET("/employees", Employees.GetEmployees)
+	r.GET("/positions", Employees.GetPositions)
 
 	r.Run("localhost:8080")
 }

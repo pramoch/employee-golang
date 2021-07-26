@@ -3,12 +3,12 @@ package Employees
 import (
 	"context"
 	DB "employee-golang/db"
-	"fmt"
 	"log"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type employee struct {
@@ -20,6 +20,11 @@ type employee struct {
 	JoinDate string `json:"joinDate"`
 	Position string `json:"position"`
 	Branch   string `json:"branch"`
+}
+
+type position struct {
+	ID   primitive.ObjectID `json:"id" bson:"_id"`
+	Name string             `json:"name" bson:"name"`
 }
 
 var e []employee
@@ -208,7 +213,7 @@ func GetEmployeeById(c *gin.Context) {
 	c.String(200, "Hello "+id)
 }
 
-func GetPositions() {
+func GetPositions(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -220,16 +225,12 @@ func GetPositions() {
 	}
 	defer cur.Close(ctx)
 
-	for cur.Next(ctx) {
-		var result bson.D
-		err := cur.Decode(&result)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// do something with result....
-		fmt.Println(result)
+	var positions []position
+	if err := cur.All(ctx, &positions); err != nil {
+		log.Fatal(err)
 	}
+
+	c.JSON(200, positions)
 
 	if err := cur.Err(); err != nil {
 		log.Fatal(err)

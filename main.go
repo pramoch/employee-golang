@@ -18,8 +18,6 @@ func main() {
 		DB.Disconnect(ctx)
 	}()
 
-	Employees.GetPositions()
-
 	Employees.Init()
 	Router.Init()
 }
