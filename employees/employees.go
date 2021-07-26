@@ -1,6 +1,15 @@
 package Employees
 
-import "github.com/gin-gonic/gin"
+import (
+	"context"
+	DB "employee-golang/db"
+	"fmt"
+	"log"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
+)
 
 type employee struct {
 	Id       string `json:"id"`
@@ -197,4 +206,32 @@ func GetEmployees(c *gin.Context) {
 func GetEmployeeById(c *gin.Context) {
 	id := c.Param("id")
 	c.String(200, "Hello "+id)
+}
+
+func GetPositions() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	collection := DB.Client.Database("employee").Collection("positions")
+
+	cur, err := collection.Find(ctx, bson.D{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cur.Close(ctx)
+
+	for cur.Next(ctx) {
+		var result bson.D
+		err := cur.Decode(&result)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// do something with result....
+		fmt.Println(result)
+	}
+
+	if err := cur.Err(); err != nil {
+		log.Fatal(err)
+	}
 }
