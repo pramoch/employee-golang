@@ -6,16 +6,86 @@
   "name": "Emma",
   "surname": "Cartner",
   "mobileNo": "0815467890",
-  "salary": {
-    "$numberDecimal": "15000"
+  "salary": 15000,
+  "branchId": {
+    "$oid": "60f4158f7e10143e505dc408"
   },
-  "joinDate": {
-    "$date": "2017-06-01T00:00:00Z"
-  },
-  "position": {
+  "positionId": {
     "$oid": "60f414b07e10143e505dc406"
   },
-  "branch": {
+  "joinedDate": {
+    "$date": "2017-06-01T00:00:00Z"
+  }
+},{
+  "_id": {
+    "$oid": "610659ed6421492e5c1025ae"
+  },
+  "id": "700102",
+  "name": "Quinn",
+  "surname": "Rivers",
+  "mobileNo": "0896552310",
+  "salary": 30000,
+  "branchId": {
     "$oid": "60f4158f7e10143e505dc408"
+  },
+  "positionId": {
+    "$oid": "60f4150f7e10143e505dc407"
+  },
+  "joinedDate": {
+    "$date": "2015-10-01T00:00:00Z"
+  }
+},{
+  "_id": {
+    "$oid": "61090bbd97ca53311c46a1b0"
+  },
+  "id": "700103",
+  "name": "Amelia",
+  "surname": "Burrows",
+  "mobileNo": "0823335859",
+  "salary": 18000,
+  "branchId": {
+    "$oid": "60f4163e7e10143e505dc40b"
+  },
+  "positionId": {
+    "$oid": "60f414b07e10143e505dc406"
+  },
+  "joinedDate": {
+    "$date": "2018-02-01T00:00:00Z"
+  }
+},{
+  "_id": {
+    "$oid": "61090d5497ca53311c46a1b1"
+  },
+  "id": "700104",
+  "name": "Jacob",
+  "surname": "Walsh",
+  "mobileNo": "0864659874",
+  "salary": 17000,
+  "joinedDate": {
+    "$date": "2015-07-01T00:00:00Z"
+  },
+  "positionId": {
+    "$oid": "60f414b07e10143e505dc406"
+  },
+  "branchId": {
+    "$oid": "60f4163e7e10143e505dc40b"
+  }
+},{
+  "_id": {
+    "$oid": "61090d5497ca53311c46a1b2"
+  },
+  "id": "700105",
+  "name": "Martha",
+  "surname": "Hills",
+  "mobileNo": "0895557890",
+  "salary": 33000,
+  "joinedDate": {
+    "$date": "2015-04-01T00:00:00Z"
+  },
+  "positionId": {
+    "$oid": "60f4150f7e10143e505dc407"
+  },
+  "branchId": {
+    "$oid": "60f4163e7e10143e505dc40b"
   }
 }]

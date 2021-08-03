@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type employee struct {
@@ -17,7 +18,7 @@ type employee struct {
 	Surname    string             `json:"surname" bson:"surname"`
 	MobileNo   string             `json:"mobileNo" bson:"mobileNo"`
 	Salary     int                `json:"salary" bson:"salary"`
-	JoinDate   primitive.DateTime `json:"joinDate" bson:"joinDate"`
+	JoinedDate primitive.DateTime `json:"joinedDate" bson:"joinedDate"`
 	PositionId primitive.ObjectID `json:"positionId" bson:"positionId"`
 	BranchId   primitive.ObjectID `json:"branchId" bson:"branchId"`
 }
@@ -229,7 +230,23 @@ func GetEmployees(c *gin.Context) {
 
 func GetEmployeeById(c *gin.Context) {
 	id := c.Param("id")
-	c.String(200, "Hello "+id)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	collection := DB.Client.Database("employee").Collection("employees")
+	filter := bson.M{"id": id}
+	var employee employee
+	err := collection.FindOne(ctx, filter).Decode(&employee)
+
+	if err == mongo.ErrNoDocuments {
+		c.JSON(404, gin.H{"desc": "Employee not found"})
+		return
+	} else if err != nil {
+		log.Fatal(err)
+	}
+
+	c.JSON(200, employee)
 }
 
 func GetPositions(c *gin.Context) {
