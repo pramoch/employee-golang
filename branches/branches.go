@@ -19,6 +19,20 @@ type branch struct {
 	Map     string             `json:"map" bson:"map"`
 }
 
+type branchesResultStatus struct {
+	Success bool   `json:"success"`
+	Desc    string `json:"desc"`
+}
+
+type branchesResultData struct {
+	Branches []branch `json:"branches"`
+}
+
+type branchesResult struct {
+	Status branchesResultStatus `json:"status"`
+	Data   branchesResultData   `json:"data"`
+}
+
 func GetBranches(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -36,7 +50,16 @@ func GetBranches(c *gin.Context) {
 		log.Fatal(err)
 	}
 
-	c.JSON(200, branches)
+	result := branchesResult{
+		Status: branchesResultStatus{
+			Success: true,
+			Desc:    "Success",
+		},
+		Data: branchesResultData{
+			Branches: branches,
+		},
+	}
+	c.JSON(200, result)
 
 	if err := cur.Err(); err != nil {
 		log.Fatal(err)
