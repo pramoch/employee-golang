@@ -57,7 +57,7 @@ func GetBranches(c *gin.Context) {
 	}
 	defer cur.Close(ctx)
 
-	var branches []branch
+	branches := []branch{}
 	if err := cur.All(ctx, &branches); err != nil {
 		log.Fatal(err)
 	}
