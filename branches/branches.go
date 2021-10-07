@@ -3,6 +3,7 @@ package Branches
 import (
 	"context"
 	DB "employee-golang/db"
+	"fmt"
 	"log"
 	"time"
 
@@ -115,5 +116,31 @@ func GetBranchById(c *gin.Context) {
 		},
 		Data: &data,
 	}
+	c.JSON(200, result)
+}
+
+func AddBranch(c *gin.Context) {
+	var branch branch
+
+	// TO DO:
+	// - Handler error of BindJSON
+	// - Validate required fields
+	c.BindJSON(&branch)
+
+	fmt.Println("== Branch ==")
+	fmt.Println(branch)
+	fmt.Println("Id: ", branch.Id)
+	fmt.Println("Name: ", branch.Name)
+	fmt.Println("TelNo: ", branch.TelNo)
+	fmt.Println("Address: ", branch.Address)
+	fmt.Println("Map: ", branch.Map)
+
+	result := branchResult{
+		Status: status{
+			Success: true,
+			Desc:    "Success",
+		},
+	}
+
 	c.JSON(200, result)
 }
