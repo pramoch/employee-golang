@@ -15,7 +15,7 @@ import (
 
 type branch struct {
 	Id      primitive.ObjectID `json:"_id" bson:"_id"`
-	Name    string             `json:"name" bson:"name"`
+	Name    string             `json:"name" bson:"name" binding:"required"`
 	TelNo   string             `json:"telNo" bson:"telNo"`
 	Address string             `json:"address" bson:"address"`
 	Map     string             `json:"map" bson:"map"`
@@ -122,10 +122,23 @@ func GetBranchById(c *gin.Context) {
 func AddBranch(c *gin.Context) {
 	var branch branch
 
-	// TO DO:
-	// - Handler error of BindJSON
-	// - Validate required fields
-	c.BindJSON(&branch)
+	if err := c.ShouldBindJSON(&branch); err != nil {
+		errMsg := "Invalid input"
+
+		if branch.Name == "" {
+			errMsg = "name is required"
+		}
+
+		result := branchResult{
+			Status: status{
+				Success: false,
+				Desc:    errMsg,
+			},
+		}
+
+		c.JSON(400, result)
+		return
+	}
 
 	fmt.Println("== Branch ==")
 	fmt.Println(branch)
