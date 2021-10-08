@@ -13,12 +13,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// bson:"_id,omitempty" - omitempty to let MongoDB automatically generate _ID
 type branch struct {
-	Id      primitive.ObjectID `json:"_id" bson:"_id"`
-	Name    string             `json:"name" bson:"name" binding:"required"`
-	TelNo   string             `json:"telNo" bson:"telNo"`
-	Address string             `json:"address" bson:"address"`
-	Map     string             `json:"map" bson:"map"`
+	Id      primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	Name    string             `json:"name,omitempty" bson:"name" binding:"required"`
+	TelNo   string             `json:"telNo,omitempty" bson:"telNo"`
+	Address string             `json:"address,omitempty" bson:"address"`
+	Map     string             `json:"map,omitempty" bson:"map"`
 }
 
 type status struct {
@@ -41,6 +42,9 @@ type branchResultData struct {
 	Branch branch `json:"branch"`
 }
 
+// Use pointer for branchResultData,
+//   when data is not provided (Branch not found)
+//   data field will be omitted from JSON
 type branchResult struct {
 	Status status            `json:"status"`
 	Data   *branchResultData `json:"data,omitempty"`
@@ -54,13 +58,13 @@ func GetBranches(c *gin.Context) {
 
 	cur, err := collection.Find(ctx, bson.D{})
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer cur.Close(ctx)
 
 	branches := []branch{}
 	if err := cur.All(ctx, &branches); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	result := branchesResult{
@@ -75,7 +79,7 @@ func GetBranches(c *gin.Context) {
 	c.JSON(200, result)
 
 	if err := cur.Err(); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
@@ -102,7 +106,7 @@ func GetBranchById(c *gin.Context) {
 		c.JSON(404, result)
 		return
 	} else if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	data := branchResultData{
@@ -120,12 +124,13 @@ func GetBranchById(c *gin.Context) {
 }
 
 func AddBranch(c *gin.Context) {
-	var branch branch
+	var b branch
 
-	if err := c.ShouldBindJSON(&branch); err != nil {
+	if err := c.ShouldBindJSON(&b); err != nil {
+		log.Println(err)
+
 		errMsg := "Invalid input"
-
-		if branch.Name == "" {
+		if b.Name == "" {
 			errMsg = "name is required"
 		}
 
@@ -140,18 +145,37 @@ func AddBranch(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("== Branch ==")
-	fmt.Println(branch)
-	fmt.Println("Id: ", branch.Id)
-	fmt.Println("Name: ", branch.Name)
-	fmt.Println("TelNo: ", branch.TelNo)
-	fmt.Println("Address: ", branch.Address)
-	fmt.Println("Map: ", branch.Map)
+	fmt.Println(b)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	collection := DB.Client.Database("employee").Collection("branches")
+	res, err := collection.InsertOne(ctx, b)
+
+	if err != nil {
+		log.Println(err)
+
+		result := branchResult{
+			Status: status{
+				Success: false,
+				Desc:    "Cannot add new branch",
+			},
+		}
+
+		c.JSON(500, result)
+		return
+	}
 
 	result := branchResult{
 		Status: status{
 			Success: true,
 			Desc:    "Success",
+		},
+		Data: &branchResultData{
+			Branch: branch{
+				Id: res.InsertedID.(primitive.ObjectID),
+			},
 		},
 	}
 
