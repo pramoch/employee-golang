@@ -4,6 +4,7 @@ import (
 	"context"
 	DB "employee-golang/db"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -221,7 +222,7 @@ func GetEmployees(c *gin.Context) {
 		log.Fatal(err)
 	}
 
-	c.JSON(200, employees)
+	c.JSON(http.StatusOK, employees)
 
 	if err := cur.Err(); err != nil {
 		log.Fatal(err)
@@ -240,13 +241,13 @@ func GetEmployeeById(c *gin.Context) {
 	err := collection.FindOne(ctx, filter).Decode(&employee)
 
 	if err == mongo.ErrNoDocuments {
-		c.JSON(404, gin.H{"desc": "Employee not found"})
+		c.JSON(http.StatusNotFound, gin.H{"desc": "Employee not found"})
 		return
 	} else if err != nil {
 		log.Fatal(err)
 	}
 
-	c.JSON(200, employee)
+	c.JSON(http.StatusOK, employee)
 }
 
 func GetPositions(c *gin.Context) {
@@ -266,7 +267,7 @@ func GetPositions(c *gin.Context) {
 		log.Fatal(err)
 	}
 
-	c.JSON(200, positions)
+	c.JSON(http.StatusOK, positions)
 
 	if err := cur.Err(); err != nil {
 		log.Fatal(err)

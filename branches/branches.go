@@ -5,6 +5,7 @@ import (
 	DB "employee-golang/db"
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -76,7 +77,7 @@ func GetBranches(c *gin.Context) {
 			Branches: branches,
 		},
 	}
-	c.JSON(200, result)
+	c.JSON(http.StatusOK, result)
 
 	if err := cur.Err(); err != nil {
 		log.Println(err)
@@ -103,7 +104,7 @@ func GetBranchById(c *gin.Context) {
 				Desc:    "Branch not found",
 			},
 		}
-		c.JSON(404, result)
+		c.JSON(http.StatusNotFound, result)
 		return
 	} else if err != nil {
 		log.Println(err)
@@ -120,7 +121,7 @@ func GetBranchById(c *gin.Context) {
 		},
 		Data: &data,
 	}
-	c.JSON(200, result)
+	c.JSON(http.StatusOK, result)
 }
 
 func AddBranch(c *gin.Context) {
@@ -141,7 +142,7 @@ func AddBranch(c *gin.Context) {
 			},
 		}
 
-		c.JSON(400, result)
+		c.JSON(http.StatusBadRequest, result)
 		return
 	}
 
@@ -163,7 +164,7 @@ func AddBranch(c *gin.Context) {
 			},
 		}
 
-		c.JSON(500, result)
+		c.JSON(http.StatusInternalServerError, result)
 		return
 	}
 
@@ -179,5 +180,5 @@ func AddBranch(c *gin.Context) {
 		},
 	}
 
-	c.JSON(200, result)
+	c.JSON(http.StatusCreated, result)
 }
