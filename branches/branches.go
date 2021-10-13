@@ -182,3 +182,74 @@ func AddBranch(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, result)
 }
+
+func UpdateBranch(c *gin.Context) {
+	id := c.Param("id")
+
+	var b branch
+	if err := c.ShouldBindJSON(&b); err != nil {
+		log.Println(err)
+
+		errMsg := "Invalid input"
+		if b.Name == "" {
+			errMsg = "name is required"
+		}
+
+		result := branchResult{
+			Status: status{
+				Success: false,
+				Desc:    errMsg,
+			},
+		}
+
+		c.JSON(http.StatusBadRequest, result)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	collection := DB.Client.Database("employee").Collection("branches")
+	docID, _ := primitive.ObjectIDFromHex(id)
+	filter := bson.M{"_id": docID}
+
+	var updatedBranch branch
+	err := collection.FindOneAndUpdate(
+		ctx,
+		filter,
+		bson.M{
+			"$set": b,
+		},
+	).Decode(&updatedBranch)
+
+	if err != nil {
+		statusCode := http.StatusInternalServerError
+		errMsg := "Cannot update branch"
+
+		if err == mongo.ErrNoDocuments {
+			statusCode = http.StatusNotFound
+			errMsg = "Branch not found"
+		}
+
+		result := branchResult{
+			Status: status{
+				Success: false,
+				Desc:    errMsg,
+			},
+		}
+		c.JSON(statusCode, result)
+		return
+	}
+
+	c.JSON(http.StatusOK, branchResult{
+		Status: status{
+			Success: true,
+			Desc:    "Success",
+		},
+		Data: &branchResultData{
+			Branch: branch{
+				Id: updatedBranch.Id,
+			},
+		},
+	})
+}

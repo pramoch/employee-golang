@@ -21,6 +21,7 @@ func Init() {
 	r.GET("/branches/:id", Branches.GetBranchById)
 	r.GET("/branches", Branches.GetBranches)
 	r.POST("/branches", Branches.AddBranch)
+	r.PUT("/branches/:id", Branches.UpdateBranch)
 
 	r.Run("localhost:8080")
 }
